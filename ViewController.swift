@@ -22,11 +22,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        do {
-            try categories = repository.fetchAllCategories()
-        } catch {
-            // do something
-        }
+        repository.fetchAllCategories(
+            success: { cats -> Void in
+                // set categories and update the UI
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.categories = cats
+                    self.tableView.reloadData()
+                }
+            },
+            failure: { () -> Void in
+                // give the user an error message
+                dispatch_async(dispatch_get_main_queue()) {
+                    let alertConroller = UIAlertController(title: "Northwinder", message: "Error accessing server", preferredStyle: UIAlertControllerStyle.Alert)
+                    alertConroller.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default, handler: nil))
+                    self.presentViewController(alertConroller, animated: true, completion: nil)
+                        
+                }
+            }
+        )
     }
 
     override func didReceiveMemoryWarning() {

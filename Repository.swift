@@ -9,13 +9,32 @@
 import Foundation
 
 class Repository {
-    func fetchAllCategories() throws -> [Category] {
-        var categories = [Category]()
-        categories.append(Category(id: 212, name: "Beverages", desc: "Soft drinks, juices, and beers"))
-        categories.append(Category(id: 231, name: "Seafood", desc: "Fish, shellfish, and salt water"))
-        categories.append(Category(id: 211, name: "Astronaut Food", desc: "Ice Cream, paste, and protein bars"))
-        categories.append(Category(id: 291, name: "Bagles", desc: "Everything, asiago, and plain"))
+    func fetchAllCategories(success fs: [Category] -> Void, failure ff: () -> Void) {
+       
+        let url = "http://svc.treeloop.net/product"
+        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
+        let session = NSURLSession.sharedSession()
         
-        return categories
+        let task = session.dataTaskWithRequest(request, completionHandler: {
+            data, response, error -> Void in
+            
+            //check for error
+            if error != nil || data == nil {
+                ff()
+                return
+            }
+            //process data
+            let json = JSON(data: data!)
+            var categories = [Category]()
+            for(_, subJson) in json {
+                let c = Category(
+                    id: subJson["CategoryID"].numberValue.integerValue,
+                    name: subJson["CategoryName"].stringValue,
+                    desc: subJson["Description"].stringValue)
+                categories.append(c)
+            }
+            fs(categories)
+        })
+        task.resume()
     }
 }
