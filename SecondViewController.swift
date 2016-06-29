@@ -11,11 +11,11 @@ import UIKit
 class SecondViewController: UIViewController {
 
     @IBOutlet weak var outputLabel: UILabel!
-    var inputLabelValue: String = ""
+    var category: Category?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        outputLabel.text = inputLabelValue
+        outputLabel.text = category?.name
     }
 
     override func didReceiveMemoryWarning() {
