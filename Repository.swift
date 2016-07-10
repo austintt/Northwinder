@@ -13,7 +13,7 @@ class Repository {
     
     func fetchAllCategories(success fs: [Category] -> Void, failure ff: () -> Void) {
        
-        let url = "http://svc.treeloop.netR/product"
+        let url = "http://svc.treeloop.net/product"
         let request = NSMutableURLRequest(URL: NSURL(string: url)!)
         let session = NSURLSession.sharedSession()
         
